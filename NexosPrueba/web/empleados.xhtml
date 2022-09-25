@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title> Nexos </title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <h:button outcome="index.xhtml" value="Index Inicio" />
+        </h:form>   
+
+        <p:growl id="message" />
+        
+        <h:form id="empleadosCrud" >
+            <p:commandButton value="Crear" oncomplete="PF('empleadosdDialog').show();"/>
+        </h:form>        
+
+       
+        <h:form id="tblEmpleados" >
+            <p:dataTable value="#{manejadorEmpleados.listaEmpleados}" 
+                         var="empleado" 
+                         paginator="true"                        
+                         rowsPerPageTemplate="5,10,{ShowAll|'Todos'}">
+                <p:column headerText="Id" >
+                    <h:outputText value="#{empleado.id}" />
+                </p:column>        
+                <p:column headerText="Documento Tipo" >
+                    <h:outputText value="#{empleado.docTipo}" />
+                </p:column>                        
+                <p:column headerText="Documento Número" >
+                    <h:outputText value="#{empleado.docNumero}" />
+                </p:column>                        
+                <p:column headerText="Nombres" >
+                    <h:outputText value="#{empleado.nombres}" />
+                </p:column>                        
+                <p:column headerText="Apellidos" >
+                    <h:outputText value="#{empleado.apellidos}" />
+                </p:column>                        
+                <p:column headerText="Departamento" >
+                    <h:outputText value="#{empleado.deptoId.nombreDepto}" />
+                </p:column>                        
+                <p:column headerText="Ciudad" >
+                    <h:outputText value="#{empleado.ciudad}" />
+                </p:column>  
+                <p:column headerText="Dirección" >
+                    <h:outputText value="#{empleado.direccion}" />
+                </p:column>                        
+                <p:column headerText="Correo Electrónico" >
+                    <h:outputText value="#{empleado.correo}" />
+                </p:column>                                            
+                <p:column headerText="Teléfono" >
+                    <h:outputText value="#{empleado.telefono}" />
+                </p:column>                        
+                <p:column headerText="Fecha Crea" >
+                    <h:outputText value="#{empleado.fechaHoraCrea}" >
+                        <f:convertDateTime parent="YYYY-MM-dd HH:mm" />
+                    </h:outputText>    
+                </p:column>
+                <p:column headerText="Fecha Mod" >
+                    <h:outputText value="#{empleado.fechaHoraMod}" >
+                        <f:convertDateTime parent="YYYY-MM-dd HH:mm" />
+                    </h:outputText>   
+                </p:column>
+                <p:column >
+                    <p:commandButton value="Eliminar" actionListener="#{manejadorEmpleados.eliminar(empleado)}" 
+                                     update=":tablaEmpleadosRender :message"/>
+                </p:column>
+                <p:column >                    
+                    <p:commandButton value="Editar" 
+                                     actionListener="#{manejadorEmpleados.showData(emp)}"
+                                     update=":tablaEmpleadosRender" 
+                                     oncomplete="PF('empleadosdDialog').show();"/>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        
+        <p:dialog widgetVar="empleadosdDialog" modal="true" showEffect="clip" header="Crear Empleado" resizable="false" >
+            <p:ajax event="close" listener="#{manejadorEmpleados.clear()}" update=":tablaEmpleadosRender" />
+            <h:form id="FormularioEmpleado" >
+                <p:panelGrid columns="2" >
+                    <p:outputLabel value="Tipo documento:" />
+                    <p:inputText value="#{manejadorEmpleados.empleados.docTipo}"/>
+                    <p:outputLabel value="Numero documento:" />
+                    <p:inputText value="#{manejadorEmpleados.empleados.docNumero}"/>
+                    <p:outputLabel value="Nombres:" />
+                    <p:inputText value="#{manejadorEmpleados.empleados.nombres}"/>
+                    <p:outputLabel value="Apellidos:" />
+                    <p:inputText value="#{manejadorEmpleados.empleados.apellidos}"/>
+                    <p:outputLabel value="Departamento:" /> 
+                    <p:selectOneMenu value="#{manejadorEmpleados.departamentos.id}" >
+                        <f:selectItems value="#{manejadorDeptos.listaDepartamentos}" 
+                                      var="listDep"
+                                      itemValue="#{listDep.id}" 
+                                      itemLabel="#{listDep.nombreDepto}"
+                                      />
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Ciudad:" />
+                    <p:inputText value="#{manejadorEmpleados.empleados.ciudad}"/>
+                    <p:outputLabel value="Direccion:" />
+                    <p:inputText value="#{manejadorEmpleados.empleados.direccion}"/>
+                    <p:outputLabel value="Correo Electronico:" />
+                    <p:inputText value="#{manejadorEmpleados.empleados.correo}"/>
+                    <p:outputLabel value="Telefono:" />
+                    <p:inputText value="#{manejadorEmpleados.empleados.telefono}"/>
+                    <p:commandButton value="Guardar" 
+                                     actionListener="#{manejadorEmpleados.guardar()}" 
+                                     oncomplete="PF('empleadosdDialog').hide();"
+                                     update=":tablaEmpleadosRender FormularioEmpleado :message"
+                                     rendered="#{manejadorEmpleados.empleados.id == 0}"
+                                     />
+                    <p:commandButton value="Actualizar" 
+                                     actionListener="#{manejadorEmpleados.editar()}" 
+                                     oncomplete="PF('empleadosdDialog').hide();"
+                                     update=":tablaEmpleadosRender FormularioEmpleado :message" 
+                                     rendered="#{manejadorEmpleados.empleados.id != 0}"
+                                     />                    
+                </p:panelGrid>
+            </h:form>
+        </p:dialog> 
+            
+    </h:body>
+</html>
+

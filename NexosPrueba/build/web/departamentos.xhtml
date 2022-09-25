@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Vista De Departamento</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <h:button outcome="index.xhtml" value="Index Inicio" />
+        </h:form>      
+
+        <p:growl id="message" />
+
+        <h:form id="crudDepto" >
+            <p:commandButton value="Crear" oncomplete="PF('dialogCrearDepartamento').show();"/>
+        </h:form>
+
+
+        <h:form id="tablablDeptos" >
+            <p:dataTable value="#{manejadorDeptos.listaDepartamentos}" 
+                         var="deptos" 
+                         paginator="true"                        
+                         rowsPerPageTemplate="5,10,{ShowAll|'Todos'}">
+                <p:column headerText="Id" >
+                    <h:outputText value="#{deptos.id}" />
+                </p:column>
+                <p:column headerText="Código" >
+                    <h:outputText value="#{deptos.codDepto}" />
+                </p:column>                    
+                <p:column headerText="Nombre" >
+                    <h:outputText value="#{deptos.nombreDepto}" />
+                </p:column>
+                <p:column headerText="Fecha Crea" >
+                    <h:outputText value="#{deptos.fechaHoraCrea}" >
+                        <f:convertDateTime parent="YYYY-MM-dd HH:mm" />
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="Fecha Mod" >
+                    <h:outputText value="#{deptos.fechaHoraMod}" >
+                        <f:convertDateTime parent="YYYY-MM-dd HH:mm" />
+                    </h:outputText>
+                </p:column>   
+                <p:column >
+                    <p:commandButton value="Eliminar" actionListener="#{manejadorDeptos.eliminar(deptos)}" 
+                                     update="tablaDeptos :message"/>
+                </p:column>
+                <p:column >                    
+                    <p:commandButton value="Editar" 
+                                     actionListener="#{manejadorDeptos.pintar(deptos)}"
+                                     update="tablaDeptos" 
+                                     oncomplete="PF('dialogCrearDepartamento').show();"/>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+
+
+        <p:dialog widgetVar="dialogCrearDepartamento" modal="true" showEffect="clip" header="Crear Departamento" resizable="false" >
+            <p:ajax event="close" listener="#{manejadorDeptos.limpiar()}" update="tablaDeptos" />
+            <h:form id="formDepartamento" >
+                <p:panelGrid columns="2" >
+                    <p:outputLabel value="Código:" />
+                    <p:inputText value="#{manejadorDeptos.departamentos.codDepto}"/>
+                    <p:outputLabel value="Nombre:" />
+                    <p:inputText value="#{manejadorDeptos.departamentos.nombreDepto}"/>
+                    <p:commandButton value="Guardar" 
+                                     actionListener="#{manejadorDeptos.guardar()}" 
+                                     oncomplete="PF('dialogCrearDepartamento').hide();"
+                                     update=":tablaDeptos formDepartamento :message"
+                                     rendered="#{manejadorDeptos.departamentos.id == 0}"
+                                     />
+                    <p:commandButton value="Actualizar" 
+                                     actionListener="#{manejadorDeptos.editar()}" 
+                                     oncomplete="PF('dialogCrearDepartamento').hide();"
+                                     update=":tablaDeptos formDepartamento :message" 
+                                     rendered="#{manejadorDeptos.departamentos.id != 0}"
+                                     />                    
+                </p:panelGrid>
+            </h:form>
+        </p:dialog> 
+
+
+    </h:body>
+</html>
+
